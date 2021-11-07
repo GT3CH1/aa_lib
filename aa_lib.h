@@ -126,6 +126,6 @@ public:
      * @param guid - the GUID we are updating.
      * @param state - the new state of the arduino.
      */
-    void sendUpdate(String guid, bool state);
+    void sendUpdate(String guid);
 };
 #endif

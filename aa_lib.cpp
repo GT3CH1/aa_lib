@@ -54,15 +54,14 @@ void aa_lib::checkAndConnectWifi() {
     }
 }
 
-void aa_lib::sendUpdate(String guid, bool state){
+void aa_lib::sendUpdate(String guid){
     WiFiClient wifi;
     HttpClient httpClient = HttpClient(wifi, update_server, server_port);
     String contentType = "application/x-www-form-urlencoded";
-    String data = "guid=" + guid + "&ip=" + getIP() + "&state=" + (state ? "true" : "false") + "&sw_version=" + String(version);
+    String data = "guid=" + guid + "&sw_version=" + String(version);
     httpClient.sendHeader("x-api-key", api_key);
     httpClient.sendHeader("x-auth-id", api_id);
     httpClient.sendHeader(HTTP_HEADER_CONTENT_LENGTH, data.length());
-    Serial.println(data);
     httpClient.put("/smarthome/update",contentType,data);
     int statusCode = httpClient.responseStatusCode(); 
     httpClient.stop();
@@ -71,13 +70,9 @@ void aa_lib::sendUpdate(String guid, bool state){
 bool aa_lib::getLastState(String guid){
     WiFiClient wifi;
     Serial.println("Getting last state for " + guid);
-    Serial.println(update_server);
-    Serial.println(server_port);
     HttpClient httpClient = HttpClient(wifi, update_server, server_port);
     httpClient.beginRequest();
     httpClient.get("/smarthome/device/"+guid);
-    Serial.println(api_key);
-    Serial.println(api_id);
     httpClient.sendHeader("x-api-key", api_key);
     httpClient.sendHeader("x-auth-id", api_id);
     httpClient.endRequest();
@@ -88,7 +83,6 @@ bool aa_lib::getLastState(String guid){
       Serial.println(error.f_str());
       return false;
     }
-    Serial.println(responeBody);
     return doc["last_state"];
 }
 
